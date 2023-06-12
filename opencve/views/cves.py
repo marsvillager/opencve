@@ -4,6 +4,7 @@ import operator
 
 from flask import abort, flash, redirect, request, render_template, url_for
 from flask_user import current_user, login_required
+from flask import current_app as app
 
 from opencve.controllers.cves import CveController
 from opencve.controllers.main import main
@@ -14,6 +15,7 @@ from opencve.models.changes import Change
 from opencve.models.events import Event
 from opencve.models.tags import CveTag
 from opencve.utils import convert_cpes, get_cwes_details, CustomHtmlHTML
+from opencve.views.attack import request_prompt
 
 
 @main.route("/cve")
@@ -60,6 +62,10 @@ def cve(cve_id):
         (time, list(evs))
         for time, evs in (itertools.groupby(events, operator.attrgetter("created_at")))
     ]
+
+    # Get Mitre ATT&CK techniques
+    cve.tid = request_prompt(app, prompt=cve.summary)
+    # cve.tid = cve.summary
 
     return render_template(
         "cve.html",

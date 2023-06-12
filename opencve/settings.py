@@ -47,6 +47,9 @@ class Config(object):
     if config.get("core", "server_name"):
         SERVER_NAME = config.get("core", "server_name")
 
+    # ChatGPT API
+    CHATGPT_API = config.get("core", "chatgpt_api")
+
     # Database
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = config.get("core", "database_uri")
