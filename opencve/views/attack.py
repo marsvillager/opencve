@@ -8,22 +8,20 @@ proxy = {
 }
 
 
-# def request_prompt(app, prompt):
-prompt = "say this is a test"
-openai_api_key = ""
-    # openai_api_key = app.config["CHATGPT_API"]
+def request_prompt(app, prompt):
+    openai_api_key = app.config["CHATGPT_API"]
 
-headers = {
+    headers = {
         'Content-Type': 'application/json',
         'Authorization': f'Bearer {openai_api_key}',
     }   
 
-data = {
+    data = {
         "model": "gpt-3.5-turbo",
         "messages": [{"role": "user", "content": prompt}],
         "temperature": 0.7,
     }
 
-response = requests.post(url, headers=headers, json=data, proxies=proxy)
+    response = requests.post(url, headers=headers, json=data, proxies=proxy)
 
-    # return response.json()
+    return response.json()

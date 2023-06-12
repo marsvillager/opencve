@@ -64,8 +64,8 @@ def cve(cve_id):
     ]
 
     # Get Mitre ATT&CK techniques
-    cve.tid = request_prompt(app, prompt=cve.summary)
-    # cve.tid = cve.summary
+    # cve.tid = request_prompt(app, prompt=cve.summary)
+    cve.tid = cve.summary
 
     return render_template(
         "cve.html",
