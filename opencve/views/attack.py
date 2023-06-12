@@ -10,7 +10,7 @@ proxy = {
 
 # def request_prompt(app, prompt):
 prompt = "say this is a test"
-openai_api_key = "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"
+openai_api_key = ""
     # openai_api_key = app.config["CHATGPT_API"]
 
 headers = {
