@@ -39,5 +39,6 @@ class Config:
 
     CHECKPOINT_FILE: str = BASE_DIR + '/attack/checkpoint.txt'
 
-    # EMBEDDINGS_FILE: str = BASE_DIR + '/attack/mitre_att&ck.csv'
-    EMBEDDINGS_FILE: str = BASE_DIR + '/attack/mitre_att&ck.pkl'
+    # batch processing
+    BATCH: int = 50
+    EMBEDDINGS_FILE: str = BASE_DIR + '/attack/embeddings/'
