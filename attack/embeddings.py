@@ -1,4 +1,5 @@
 import requests
+import numpy as np
 
 from config import Config
 
@@ -18,4 +19,7 @@ def get_embeddings(input):
 
     response = requests.post(Config.EMBEDDINGS_URL, headers=headers, json=data, proxies=Config.PROXY)
 
-    return response.json()
+    # dict_keys(['object', 'data', 'model', 'usage'])
+    vect_list: list = response.json()["data"][0]["embedding"]
+
+    return np.array(vect_list)

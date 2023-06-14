@@ -1,7 +1,7 @@
 import itertools
 import json
 import operator
-from attack.get_embeddings import request_prompt
+from attack.embeddings import request_prompt
 
 from flask import abort, flash, redirect, request, render_template, url_for
 from flask_user import current_user, login_required
