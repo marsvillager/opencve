@@ -1,11 +1,11 @@
-import time
+import os.path
 import numpy as np
-import pandas as pd
 import stix2
 
+from stix2 import FileSystemSource, CompositeDataSource, Filter
+from typing import Dict, List
 from config import Config
 from embeddings import get_embeddings
-from stix2 import FileSystemSource, CompositeDataSource, Filter
 
 
 def get_data() -> list:
@@ -22,12 +22,24 @@ def get_data() -> list:
     src = CompositeDataSource()
     src.add_data_sources([enterprise_attack_src, mobile_attack_src, ics_attack_src])
 
-    filter_list: list[stix2.Filter] = Filter("type", "=", "attack-pattern")
+    filter_list: List[stix2.Filter] = Filter("type", "=", "attack-pattern")
 
     return src.query(filter_list)
 
 
-def format_data():
+def save_checkpoint(checkpoint: int):
+    with open(Config.CHECKPOINT_FILE, 'w') as file:
+        file.write(str(checkpoint))
+
+
+def load_checkpoint():
+    if os.path.exists(Config.CHECKPOINT_FILE):
+        with open(Config.CHECKPOINT_FILE, 'r') as file:
+            return int(file.read())
+    return 0
+
+
+def format_data(format_list: list) -> bool:
     """
     Extract id, name, description of the technique and get its embeddings depends on description.
     """
@@ -35,39 +47,38 @@ def format_data():
 
     length: int = len(techniques)
 
-    format_list: list = []
-    GREEN: str = '\033[32m'
-    RESET: str = '\033[0m'
-    # LOADING_SYMBOLS: list = ['|', '/', '-', '\\']
-    for technique in techniques:
-        for i in range(length):
-            print('\r', end='')
-            print(f'{GREEN}In Process: {technique["external_references"][0]["external_id"]} --- {technique["name"]}... '
-                  f'[{i+1}/{length}]{RESET}\n', end='', flush=True)
-            time.sleep(1)
+    for count, technique in enumerate(techniques, start=1):
+        checkpoint: int = load_checkpoint()
 
-            # deprecated items
-            if 'x_mitre_deprecated' in technique and technique['x_mitre_deprecated'] is True:
-                continue
+        if checkpoint >= length:
+            return True
 
-            description: str = ''
-            embedding: np.ndarray = np.zeros(None)
-            if 'description' in technique:
-                description = technique["description"]
-                get_embeddings(description)  # get embeddings depends on description
+        if checkpoint >= count:
+            continue
 
-            format_dict: dict[str, str] = {
-                "id": technique["external_references"][0]["external_id"],
-                "name": technique["name"],
-                "description": description,
-                "embedding": embedding
-            }
+        print('\r', end='')
+        print(f'{Config.GREEN}In Process: [{count}/{length}]  {technique["external_references"][0]["external_id"]} --- '
+              f'{technique["name"]}{Config.RESET}\n', end='', flush=True)
 
-            format_list.append(format_dict)
+        # deprecated items
+        if 'x_mitre_deprecated' in technique and technique['x_mitre_deprecated'] is True:
+            continue
 
-        # show all columns
-        pd.set_option('display.max_columns', None)
-        pd.set_option('expand_frame_repr', False)
+        embedding: np.ndarray = np.zeros(None)
+        if 'description' in technique:
+            embedding = get_embeddings(technique["description"])  # get embeddings depends on description
 
-        df: pd.DataFrame = pd.DataFrame(format_list)
-        df.to_csv('mitre_att&ck.csv')
+        # get_embeddings 这一步由于网络的不稳定极可能结束进程，而要处理的数据有很庞大，因此需要保存断点
+        checkpoint: int = count
+        save_checkpoint(checkpoint)
+
+        format_dict: Dict[str, str] = {
+            "id": technique["external_references"][0]["external_id"],
+            "name": technique["name"],
+            "embedding": embedding
+        }
+
+        # save dict in list
+        format_list.append(format_dict)
+
+    return False

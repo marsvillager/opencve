@@ -8,6 +8,11 @@ class Config:
     """
     Variables.
     """
+    RED: str = '\033[31m'
+    GREEN: str = '\033[32m'
+    BLUE: str = '\033[34m'
+    RESET: str = '\033[0m'
+
     BASE_DIR: str = os.path.dirname(os.path.dirname(__file__))
 
     CTI_URL: str = "https://github.com/mitre/cti.git"
@@ -20,14 +25,19 @@ class Config:
     }
 
     # OpenAI URL
-    EMBEDDINGS_URL = 'https://api.openai.com/v1/embeddings'
+    EMBEDDINGS_URL: str = 'https://api.openai.com/v1/embeddings'
 
     # ChatGPT API, located in opencve.cfg(created after `opencve init`)
-    OPENCVE_HOME = os.environ.get("OPENCVE_HOME")  # 注意路径问题，设置的是相对路径，一般是 ./conf，但目的是在 root/opencve下创建conf
-    OPENCVE_CONFIG = str(BASE_DIR / Path(OPENCVE_HOME) / "opencve.cfg")  # 转绝对路径
+    OPENCVE_HOME: str = os.environ.get("OPENCVE_HOME")  # 注意路径问题，设置的是相对路径，一般是 ./conf，但目的是在 root/opencve下创建conf
+    OPENCVE_CONFIG: str = str(BASE_DIR / Path(OPENCVE_HOME) / "opencve.cfg")  # 转绝对路径
 
     opencve_config = configparser.ConfigParser()
     if Path(OPENCVE_CONFIG).exists():
         opencve_config.read(OPENCVE_CONFIG)
 
-    CHATGPT_API = opencve_config.get("core", "chatgpt_api")
+    CHATGPT_API: str = opencve_config.get("core", "chatgpt_api")
+
+    CHECKPOINT_FILE: str = BASE_DIR + '/attack/checkpoint.txt'
+
+    # EMBEDDINGS_FILE: str = BASE_DIR + '/attack/mitre_att&ck.csv'
+    EMBEDDINGS_FILE: str = BASE_DIR + '/attack/mitre_att&ck.pkl'
