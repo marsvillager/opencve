@@ -5,7 +5,6 @@ from attack.get_embeddings import request_prompt
 
 from flask import abort, flash, redirect, request, render_template, url_for
 from flask_user import current_user, login_required
-from flask import current_app as app
 
 from opencve.controllers.cves import CveController
 from opencve.controllers.main import main
@@ -64,7 +63,7 @@ def cve(cve_id):
     ]
 
     # Get Mitre ATT&CK techniques
-    # cve.tid = request_prompt(app, input=cve.summary)
+    # cve.tid = request_prompt(input=cve.summary)
     cve.tid = cve.summary
 
     return render_template(

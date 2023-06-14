@@ -1,15 +1,10 @@
 import requests
 
-
-url = 'https://api.openai.com/v1/chat/completions'
-proxy = {
-    'http': 'http://127.0.0.1:7890',
-    'https': 'http://127.0.0.1:7890'
-}
+from config import Config
 
 
-def request_prompt(app, input):
-    openai_api_key = app.config["CHATGPT_API"]
+def get_embeddings(input):
+    openai_api_key = Config.CHATGPT_API
 
     headers = {
         'Content-Type': 'application/json',
@@ -21,6 +16,6 @@ def request_prompt(app, input):
         "input": input
     }
 
-    response = requests.post(url, headers=headers, json=data, proxies=proxy)
+    response = requests.post(Config.EMBEDDINGS_URL, headers=headers, json=data, proxies=Config.PROXY)
 
     return response.json()
