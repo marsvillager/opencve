@@ -10,9 +10,7 @@ if __name__ == '__main__':
     print(f'{Config.RED}Download/Update data or not? Please input yes or no:{Config.RESET}')
     if input() == 'yes':
         # 1. update mitre att&ck data
-        print({Config.RED})
         update()
-        print({Config.RESET})
 
         # 2. update embeddings
         os.remove(Config.CHECKPOINT_FILE) if os.path.exists(Config.CHECKPOINT_FILE) else None
