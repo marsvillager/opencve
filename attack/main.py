@@ -10,7 +10,7 @@ from prepare import update
 
 if __name__ == '__main__':
     # save logs
-    sys.stdout = Logger("./log/log.txt")
+    sys.stdout = Logger("./log/")
 
     print(f'{Config.RED}Download/Update data or not? Please input yes or no:{Config.RESET}')
     if input() == 'yes':
