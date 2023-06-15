@@ -1,12 +1,17 @@
 import os.path
 import pickle
+import sys
 
+from log.log import Logger
 from config import Config
 from package import format_data, load_checkpoint
 from prepare import update
 
 
 if __name__ == '__main__':
+    # save logs
+    sys.stdout = Logger("./log/log.txt")
+
     print(f'{Config.RED}Download/Update data or not? Please input yes or no:{Config.RESET}')
     if input() == 'yes':
         # 1. update mitre att&ck data
