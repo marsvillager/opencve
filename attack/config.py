@@ -40,5 +40,8 @@ class Config:
     CHECKPOINT_FILE: str = BASE_DIR + '/attack/checkpoint.txt'
 
     # batch processing
-    BATCH: int = 50
+    BATCH: int = 2000
     EMBEDDINGS_FILE: str = BASE_DIR + '/attack/embeddings/'
+
+    # Display top [RANK]
+    RANK: int = 5

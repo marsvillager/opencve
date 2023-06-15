@@ -3,7 +3,6 @@ import numpy as np
 import stix2
 
 from stix2 import FileSystemSource, CompositeDataSource, Filter
-from typing import Dict, List
 from config import Config
 from embeddings import get_embeddings
 
@@ -22,7 +21,7 @@ def get_data() -> list:
     src = CompositeDataSource()
     src.add_data_sources([enterprise_attack_src, mobile_attack_src, ics_attack_src])
 
-    filter_list: List[stix2.Filter] = Filter("type", "=", "attack-pattern")
+    filter_list: list[stix2.Filter] = Filter("type", "=", "attack-pattern")
 
     return src.query(filter_list)
 
@@ -39,7 +38,7 @@ def load_checkpoint():
     return 0
 
 
-def format_data(format_list: list, count: int) -> bool:
+def format_data(format_dict: dict[tuple, np.array], count: int) -> bool:
     """
     Extract id, name, description of the technique and get its embeddings depends on description.
     """
@@ -48,10 +47,12 @@ def format_data(format_list: list, count: int) -> bool:
     length: int = len(techniques)
 
     checkpoint: int = load_checkpoint()
-    for technique in techniques[checkpoint:]:
-        if checkpoint >= length:
-            return True
 
+    if checkpoint >= length:
+        print("Congratulations! Task completed 🎉🎉🎉")
+        return True
+
+    for technique in techniques[checkpoint:]:
         # 注意终止条件，如果内部不限制可能会绕过分批处理的设计
         if checkpoint >= Config.BATCH * count:
             return False
@@ -66,19 +67,13 @@ def format_data(format_list: list, count: int) -> bool:
 
         embedding: np.ndarray = np.zeros(None)
         if 'description' in technique:
-            embedding = get_embeddings(technique["description"])  # get embeddings depends on description
+            embedding: np.array = get_embeddings(technique["description"])  # get embeddings depends on description
 
         # get_embeddings 这一步由于网络的不稳定极可能结束进程，而要处理的数据有很庞大，因此需要保存断点
         checkpoint += 1
         save_checkpoint(checkpoint)
 
-        format_dict: Dict[str, str] = {
-            "id": technique["external_references"][0]["external_id"],
-            "name": technique["name"],
-            "embedding": embedding
-        }
-
         # save dict in list
-        format_list.append(format_dict)
+        format_dict[tuple([technique["external_references"][0]["external_id"], technique["name"]])] = embedding
 
     return False

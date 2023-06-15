@@ -1,7 +1,9 @@
 import os.path
 import pickle
 import sys
+import numpy as np
 
+from calculation import calc_distance
 from log.log import Logger
 from config import Config
 from package import format_data, load_checkpoint
@@ -21,7 +23,7 @@ if __name__ == '__main__':
         os.remove(Config.CHECKPOINT_FILE) if os.path.exists(Config.CHECKPOINT_FILE) else None
         os.makedirs(Config.EMBEDDINGS_FILE) if not os.path.exists(Config.EMBEDDINGS_FILE) else None
 
-        format_list: list = []
+        format_dict: dict[tuple, np.array] = {}
         count: int = 1
         while True:
             # 分批处理
@@ -30,23 +32,32 @@ if __name__ == '__main__':
                 filename: str = 'mitre_att&ck_' + str(count) + '.pkl'
                 with open(Config.EMBEDDINGS_FILE + filename, 'wb') as f:
                     print(f'{Config.BLUE}Batch Processing: saving results in {filename}{Config.RESET}')
-                    pickle.dump(format_list, f)
+                    pickle.dump(format_dict, f)
 
-                format_list: list = []
+                format_dict: dict[tuple, np.array] = {}
                 count += 1
 
             try:
-                if format_data(format_list, count):  # 注意终止条件，如果内部不限制可能会绕过分批处理的设计
+                if format_data(format_dict, count):  # 注意终止条件，如果内部不限制可能会绕过分批处理的设计
                     break
             except Exception as e:
                 print(f"An error occurred: {e}")
 
         # 3. save embeddings
-        filename: str = 'mitre_att&ck_' + str(count) + '.pkl'
+        if Config.BATCH >= checkpoint:  # 未作分批处理
+            filename: str = 'mitre_att&ck.pkl'
+        else:
+            filename: str = 'mitre_att&ck_' + str(count) + '.pkl'
+
         with open(Config.EMBEDDINGS_FILE + filename, 'wb') as f:
             print(f'{Config.BLUE}Batch Processing: saving results in {filename}{Config.RESET}')
-            pickle.dump(format_list, f)
+            pickle.dump(format_dict, f)
 
-    # 4. read embeddings
-    # with open(Config.EMBEDDINGS_FILE, 'rb') as f:
-    #     print(pickle.load(f))
+    print(calc_distance("grav is a file-based Web platform. Prior to version 1.7.42, the denylist introduced "
+                  "in commit 9d6a2d to prevent dangerous functions from being executed via injection of malicious "
+                  "templates was insufficient and could be easily subverted in multiple ways -- "
+                  "(1) using unsafe functions that are not banned, (2) using capitalised callable names, and "
+                  "(3) using fully-qualified names for referencing callables. Consequently, a low privileged attacker "
+                  "with login access to Grav Admin panel and page creation/update permissions "
+                  "is able to inject malicious templates to obtain remote code execution. "
+                  "A patch in version 1.7.42 improves the denylist."))

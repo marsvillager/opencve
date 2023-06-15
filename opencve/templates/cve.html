@@ -279,11 +279,13 @@
                 <div class="box-header">
                     <div class="box-title">Mitre ATT&CK Matrix</div>
                 </div>
-                <div class="box-body">
-                    <p><strong><i class="fa fa-external-link"></i> Technique ID :</strong> <a
-                        href="http://attack.mitre.org/techniques/T1589" target="_blank">{{
-                    cve.tid }}</a></p>
-                </div>
+                {% for cve in cve.techniques %}
+                    <div class="box-body">
+                        <p><strong><i class="fa fa-external-link"></i> {{ cve[1] }} :</strong> <a
+                            href="http://attack.mitre.org/techniques/T1589" target="_blank">{{
+                        cve[0] }}</a></p>
+                    </div>
+                {% endfor %}
             </div>
         </div>
 

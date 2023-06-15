@@ -1,7 +1,8 @@
 import itertools
 import json
 import operator
-from attack.embeddings import request_prompt
+import numpy as np
+from attack.calculation import calc_distance
 
 from flask import abort, flash, redirect, request, render_template, url_for
 from flask_user import current_user, login_required
@@ -63,8 +64,10 @@ def cve(cve_id):
     ]
 
     # Get Mitre ATT&CK techniques
-    # cve.tid = request_prompt(input=cve.summary)
-    cve.tid = cve.summary
+    rank_result: dict[tuple, np.array] = calc_distance(input=cve.summary)
+    cve.techniques = []
+    for technique in rank_result.keys():
+        cve.techniques.append(technique)
 
     return render_template(
         "cve.html",
