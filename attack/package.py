@@ -47,9 +47,8 @@ def format_data(format_list: list, count: int) -> bool:
 
     length: int = len(techniques)
 
-    for num, technique in enumerate(techniques, start=1):
-        checkpoint: int = load_checkpoint()
-
+    checkpoint: int = load_checkpoint()
+    for technique in techniques[checkpoint:]:
         if checkpoint >= length:
             return True
 
@@ -57,11 +56,8 @@ def format_data(format_list: list, count: int) -> bool:
         if checkpoint >= Config.BATCH * count:
             return False
 
-        if checkpoint >= num:
-            continue
-
         print('\r', end='')
-        print(f'{Config.GREEN}In Process: [{num}/{length}]  {technique["external_references"][0]["external_id"]} --- '
+        print(f'{Config.GREEN}In Process: [{checkpoint+1}/{length}]  {technique["external_references"][0]["external_id"]} --- '
               f'{technique["name"]}{Config.RESET}\n', end='', flush=True)
 
         # deprecated items
@@ -73,7 +69,7 @@ def format_data(format_list: list, count: int) -> bool:
             embedding = get_embeddings(technique["description"])  # get embeddings depends on description
 
         # get_embeddings 这一步由于网络的不稳定极可能结束进程，而要处理的数据有很庞大，因此需要保存断点
-        checkpoint: int = num
+        checkpoint += 1
         save_checkpoint(checkpoint)
 
         format_dict: Dict[str, str] = {
