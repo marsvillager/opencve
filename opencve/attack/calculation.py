@@ -1,16 +1,38 @@
 import glob
 import pickle
+import requests
 import numpy as np
 
-from opencve.attack.embeddings import get_embeddings
-from opencve.attack.config import Config
+from opencve.configuration import PROXY, OPENAI_API_KEY, EMBEDDINGS_FILE, RANK
+
+# OpenAI URL
+EMBEDDINGS_URL: str = 'https://api.openai.com/v1/embeddings'
+
+
+def get_embeddings(input):
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {OPENAI_API_KEY}',
+    }
+
+    data = {
+        "model": "text-embedding-ada-002",
+        "input": input
+    }
+
+    response = requests.post(EMBEDDINGS_URL, headers=headers, json=data, proxies=PROXY)
+
+    # dict_keys(['object', 'data', 'model', 'usage'])
+    vect_list: list = response.json()["data"][0]["embedding"]
+
+    return np.array(vect_list)
 
 
 def calc_distance(input):
     src_vector: np.array = get_embeddings(input)
 
     # 整合分批处理后的所有.pkl文件
-    id_file: str = Config.EMBEDDINGS_FILE + '*.pkl'
+    id_file: str = EMBEDDINGS_FILE + '*.pkl'
     format_dict: dict[tuple, np.array] = {}
     for file in glob.glob(id_file):
         with open(file, 'rb') as f:
@@ -19,4 +41,4 @@ def calc_distance(input):
     for item in format_dict.keys():
         format_dict[item] = np.sqrt(np.sum(np.square(format_dict[item] - src_vector)))
 
-    return sorted(format_dict.items(), key=lambda k: float(k[1]), reverse=False)[:Config.RANK]
+    return sorted(format_dict.items(), key=lambda k: float(k[1]), reverse=False)[:RANK]

@@ -36,3 +36,11 @@ EMAIL_CONFIRMATION_MESSAGE = (
     'and Spam folders for the confirmation email or <a href="/account/resend-'
     'email-confirmation">Re-send confirmation email</a>.'
 )
+
+# color code
+RED: str = '\033[31m'
+GREEN: str = '\033[32m'
+BLUE: str = '\033[34m'
+RESET: str = '\033[0m'
+
+CTI_URL: str = "https://github.com/mitre/cti.git"

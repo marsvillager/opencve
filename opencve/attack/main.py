@@ -3,35 +3,35 @@ import pickle
 import sys
 import numpy as np
 
+from opencve.attack import Logger, update
+from opencve.attack.process import format_data, load_checkpoint
 from opencve.attack.calculation import calc_distance
-from opencve.attack.log.log import Logger
-from opencve.attack.config import Config
-from opencve.attack.package import format_data, load_checkpoint
-from opencve.attack.prepare import update
+from opencve.constants import RED, BLUE, RESET
+from opencve.configuration import CHECKPOINT_FILE, EMBEDDINGS_FILE, BATCH
 
 
 if __name__ == '__main__':
     # save logs
     sys.stdout = Logger("./log/")
 
-    print(f'{Config.RED}Download/Update data or not? Please input yes or no:{Config.RESET}')
+    print(f'{RED}Download/Update data or not? Please input yes or no:{RESET}')
     if input() == 'yes':
         # 1. update mitre att&ck data
         update()
 
         # 2. update embeddings
-        os.remove(Config.CHECKPOINT_FILE) if os.path.exists(Config.CHECKPOINT_FILE) else None
-        os.makedirs(Config.EMBEDDINGS_FILE) if not os.path.exists(Config.EMBEDDINGS_FILE) else None
+        os.remove(CHECKPOINT_FILE) if os.path.exists(CHECKPOINT_FILE) else None
+        os.makedirs(EMBEDDINGS_FILE) if not os.path.exists(EMBEDDINGS_FILE) else None
 
         format_dict: dict[tuple, np.array] = {}
         count: int = 1
         while True:
             # 分批处理
             checkpoint = load_checkpoint()
-            if checkpoint >= Config.BATCH * count:
+            if checkpoint >= BATCH * count:
                 filename: str = 'mitre_att&ck_' + str(count) + '.pkl'
-                with open(Config.EMBEDDINGS_FILE + filename, 'wb') as f:
-                    print(f'{Config.BLUE}Batch Processing: saving results in {filename}{Config.RESET}')
+                with open(EMBEDDINGS_FILE + filename, 'wb') as f:
+                    print(f'{BLUE}Batch Processing: saving results in {filename}{RESET}')
                     pickle.dump(format_dict, f)
 
                 format_dict: dict[tuple, np.array] = {}
@@ -44,13 +44,13 @@ if __name__ == '__main__':
                 print(f"An error occurred: {e}")
 
         # 3. save embeddings
-        if Config.BATCH >= checkpoint:  # 未作分批处理
+        if BATCH >= checkpoint:  # 未作分批处理
             filename: str = 'mitre_att&ck.pkl'
         else:
             filename: str = 'mitre_att&ck_' + str(count) + '.pkl'
 
-        with open(Config.EMBEDDINGS_FILE + filename, 'wb') as f:
-            print(f'{Config.BLUE}Batch Processing: saving results in {filename}{Config.RESET}')
+        with open(EMBEDDINGS_FILE + filename, 'wb') as f:
+            print(f'{BLUE}Batch Processing: saving results in {filename}{RESET}')
             pickle.dump(format_dict, f)
 
     print(calc_distance("grav is a file-based Web platform. Prior to version 1.7.42, the denylist introduced "

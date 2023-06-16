@@ -3,8 +3,9 @@ import numpy as np
 import stix2
 
 from stix2 import FileSystemSource, CompositeDataSource, Filter
-from opencve.attack.config import Config
-from opencve.attack.embeddings import get_embeddings
+from opencve.attack.calculation import get_embeddings
+from opencve.constants import GREEN, RESET
+from opencve.configuration import MITRE_ATTACK_DATA_PATH, CHECKPOINT_FILE, BATCH
 
 
 def get_data() -> list:
@@ -13,10 +14,10 @@ def get_data() -> list:
 
     :return: techniques of stix2
     """
-    enterprise_attack_src: stix2.FileSystemSource = FileSystemSource(Config.MITRE_ATTACK_DATA_PATH +
+    enterprise_attack_src: stix2.FileSystemSource = FileSystemSource(MITRE_ATTACK_DATA_PATH +
                                                                      "enterprise-attack")
-    mobile_attack_src: stix2.FileSystemSource = FileSystemSource(Config.MITRE_ATTACK_DATA_PATH + "mobile-attack")
-    ics_attack_src: stix2.FileSystemSource = FileSystemSource(Config.MITRE_ATTACK_DATA_PATH + "ics-attack")
+    mobile_attack_src: stix2.FileSystemSource = FileSystemSource(MITRE_ATTACK_DATA_PATH + "mobile-attack")
+    ics_attack_src: stix2.FileSystemSource = FileSystemSource(MITRE_ATTACK_DATA_PATH + "ics-attack")
 
     src = CompositeDataSource()
     src.add_data_sources([enterprise_attack_src, mobile_attack_src, ics_attack_src])
@@ -27,13 +28,13 @@ def get_data() -> list:
 
 
 def save_checkpoint(checkpoint: int):
-    with open(Config.CHECKPOINT_FILE, 'w') as file:
+    with open(CHECKPOINT_FILE, 'w') as file:
         file.write(str(checkpoint))
 
 
 def load_checkpoint():
-    if os.path.exists(Config.CHECKPOINT_FILE):
-        with open(Config.CHECKPOINT_FILE, 'r') as file:
+    if os.path.exists(CHECKPOINT_FILE):
+        with open(CHECKPOINT_FILE, 'r') as file:
             return int(file.read())
     return 0
 
@@ -54,12 +55,12 @@ def format_data(format_dict: dict[tuple, np.array], count: int) -> bool:
 
     for technique in techniques[checkpoint:]:
         # 注意终止条件，如果内部不限制可能会绕过分批处理的设计
-        if checkpoint >= Config.BATCH * count:
+        if checkpoint >= BATCH * count:
             return False
 
         print('\r', end='')
-        print(f'{Config.GREEN}In Process: [{checkpoint+1}/{length}]  {technique["external_references"][0]["external_id"]} --- '
-              f'{technique["name"]}{Config.RESET}\n', end='', flush=True)
+        print(f'{GREEN}In Process: [{checkpoint+1}/{length}]  {technique["external_references"][0]["external_id"]} --- '
+              f'{technique["name"]}{RESET}\n', end='', flush=True)
 
         # deprecated items
         if 'x_mitre_deprecated' in technique and technique['x_mitre_deprecated'] is True:
