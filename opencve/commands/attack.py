@@ -7,12 +7,17 @@ from opencve.attack import Logger, update
 from opencve.attack.process import format_data, load_checkpoint
 from opencve.attack.calculation import calc_distance
 from opencve.constants import RED, BLUE, RESET
-from opencve.configuration import CHECKPOINT_FILE, EMBEDDINGS_FILE, BATCH
+from opencve.configuration import MITRE_ATTACK_LOG_PATH,CHECKPOINT_FILE, EMBEDDINGS_FILE, BATCH
 
-
-if __name__ == '__main__':
+import click
+from flask.cli import with_appcontext
+@click.command()
+@with_appcontext
+def attack():
+    """Generate embeddings of Mitre ATT&CK techniques."""
     # save logs
-    sys.stdout = Logger("./log/")
+    os.makedirs(MITRE_ATTACK_LOG_PATH) if not os.path.exists(MITRE_ATTACK_LOG_PATH) else None
+    sys.stdout = Logger(MITRE_ATTACK_LOG_PATH)
 
     print(f'{RED}Download/Update data or not? Please input yes or no:{RESET}')
     if input() == 'yes':
@@ -30,7 +35,7 @@ if __name__ == '__main__':
             checkpoint = load_checkpoint()
             if checkpoint >= BATCH * count:
                 filename: str = 'mitre_att&ck_' + str(count) + '.pkl'
-                with open(EMBEDDINGS_FILE + filename, 'wb') as f:
+                with open(EMBEDDINGS_FILE / filename, 'wb') as f:
                     print(f'{BLUE}Batch Processing: saving results in {filename}{RESET}')
                     pickle.dump(format_dict, f)
 
@@ -49,7 +54,7 @@ if __name__ == '__main__':
         else:
             filename: str = 'mitre_att&ck_' + str(count) + '.pkl'
 
-        with open(EMBEDDINGS_FILE + filename, 'wb') as f:
+        with open(EMBEDDINGS_FILE / filename, 'wb') as f:
             print(f'{BLUE}Batch Processing: saving results in {filename}{RESET}')
             pickle.dump(format_dict, f)
 

@@ -3,10 +3,14 @@ import pickle
 import requests
 import numpy as np
 
-from opencve.configuration import PROXY, OPENAI_API_KEY, EMBEDDINGS_FILE, RANK
+from pathlib import PosixPath
+from opencve.configuration import PROXY, EMBEDDINGS_FILE, RANK, config
 
 # OpenAI URL
 EMBEDDINGS_URL: str = 'https://api.openai.com/v1/embeddings'
+
+# openai api key
+OPENAI_API_KEY: str = config.get("core", "openai_api_key")
 
 
 def get_embeddings(input):
@@ -32,7 +36,7 @@ def calc_distance(input):
     src_vector: np.array = get_embeddings(input)
 
     # 整合分批处理后的所有.pkl文件
-    id_file: str = EMBEDDINGS_FILE + '*.pkl'
+    id_file: PosixPath = EMBEDDINGS_FILE / '*.pkl'
     format_dict: dict[tuple, np.array] = {}
     for file in glob.glob(id_file):
         with open(file, 'rb') as f:
