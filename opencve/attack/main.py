@@ -3,11 +3,11 @@ import pickle
 import sys
 import numpy as np
 
-from calculation import calc_distance
-from log.log import Logger
-from config import Config
-from package import format_data, load_checkpoint
-from prepare import update
+from opencve.attack.calculation import calc_distance
+from opencve.attack.log.log import Logger
+from opencve.attack.config import Config
+from opencve.attack.package import format_data, load_checkpoint
+from opencve.attack.prepare import update
 
 
 if __name__ == '__main__':

@@ -2,8 +2,8 @@ import glob
 import pickle
 import numpy as np
 
-from embeddings import get_embeddings
-from config import Config
+from opencve.attack.embeddings import get_embeddings
+from opencve.attack.config import Config
 
 
 def calc_distance(input):

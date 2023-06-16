@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-from config import Config
+from opencve.attack.config import Config
 
 
 def update() -> None:

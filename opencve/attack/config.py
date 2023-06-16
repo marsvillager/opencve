@@ -29,7 +29,7 @@ class Config:
 
     # ChatGPT API, located in opencve.cfg(created after `opencve init`)
     OPENCVE_HOME: str = os.environ.get("OPENCVE_HOME")  # 注意路径问题，设置的是相对路径，一般是 ./conf，但目的是在 root/opencve下创建conf
-    OPENCVE_CONFIG: str = str(BASE_DIR / Path(OPENCVE_HOME) / "opencve.cfg")  # 转绝对路径
+    OPENCVE_CONFIG: str = str(os.path.join(BASE_DIR, '../') / Path(OPENCVE_HOME) / "opencve.cfg")  # 转绝对路径
 
     opencve_config = configparser.ConfigParser()
     if Path(OPENCVE_CONFIG).exists():

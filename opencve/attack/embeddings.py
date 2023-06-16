@@ -1,7 +1,7 @@
 import requests
 import numpy as np
 
-from config import Config
+from opencve.attack.config import Config
 
 
 def get_embeddings(input):

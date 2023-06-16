@@ -3,8 +3,8 @@ import numpy as np
 import stix2
 
 from stix2 import FileSystemSource, CompositeDataSource, Filter
-from config import Config
-from embeddings import get_embeddings
+from opencve.attack.config import Config
+from opencve.attack.embeddings import get_embeddings
 
 
 def get_data() -> list:
