@@ -16,6 +16,7 @@ from opencve.models.events import Event
 from opencve.models.tags import CveTag
 from opencve.utils import convert_cpes, get_cwes_details, CustomHtmlHTML
 from opencve.attack.calculation import calc_distance
+from opencve.configuration import RANK
 
 
 @main.route("/cve")
@@ -64,10 +65,12 @@ def cve(cve_id):
     ]
 
     # Get Mitre ATT&CK techniques
-    rank_result: dict[tuple, np.array] = calc_distance(input=cve.summary)
+    rank_result: list[dict[tuple, np.array]] = calc_distance(input=cve.summary)
+
     cve.techniques = []
-    for technique in rank_result.keys():
+    for technique in rank_result:
         cve.techniques.append(technique)
+    cve.num = RANK
 
     return render_template(
         "cve.html",
