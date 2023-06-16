@@ -66,9 +66,11 @@ def format_data(format_dict: dict[tuple, np.array], count: int) -> bool:
         if 'x_mitre_deprecated' in technique and technique['x_mitre_deprecated'] is True:
             continue
 
-        embedding: np.ndarray = np.zeros(None)
-        if 'description' in technique:
-            embedding: np.array = get_embeddings(technique["description"])  # get embeddings depends on description
+        # 没有描述无法匹配
+        if 'description' not in technique:
+            continue
+
+        embedding: np.array = get_embeddings(technique["description"])  # get embeddings depends on description
 
         # get_embeddings 这一步由于网络的不稳定极可能结束进程，而要处理的数据有很庞大，因此需要保存断点
         checkpoint += 1
