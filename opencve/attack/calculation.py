@@ -36,7 +36,7 @@ def calc_distance(input):
     src_vector: np.array = get_embeddings(input)
 
     # 整合分批处理后的所有.pkl文件
-    id_file: PosixPath = EMBEDDINGS_FILE / '*.pkl'
+    id_file: str = str(EMBEDDINGS_FILE / '*.pkl')
     format_dict: dict[tuple, np.array] = {}
     for file in glob.glob(id_file):
         with open(file, 'rb') as f:
