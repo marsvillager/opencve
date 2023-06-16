@@ -14,10 +14,9 @@ def get_data() -> list:
 
     :return: techniques of stix2
     """
-    enterprise_attack_src: stix2.FileSystemSource = FileSystemSource(MITRE_ATTACK_DATA_PATH +
-                                                                     "enterprise-attack")
-    mobile_attack_src: stix2.FileSystemSource = FileSystemSource(MITRE_ATTACK_DATA_PATH + "mobile-attack")
-    ics_attack_src: stix2.FileSystemSource = FileSystemSource(MITRE_ATTACK_DATA_PATH + "ics-attack")
+    enterprise_attack_src: stix2.FileSystemSource = FileSystemSource(str(MITRE_ATTACK_DATA_PATH / "enterprise-attack"))
+    mobile_attack_src: stix2.FileSystemSource = FileSystemSource(str(MITRE_ATTACK_DATA_PATH / "mobile-attack"))
+    ics_attack_src: stix2.FileSystemSource = FileSystemSource(str(MITRE_ATTACK_DATA_PATH / "ics-attack"))
 
     src = CompositeDataSource()
     src.add_data_sources([enterprise_attack_src, mobile_attack_src, ics_attack_src])

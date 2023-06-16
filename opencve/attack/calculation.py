@@ -3,7 +3,6 @@ import pickle
 import requests
 import numpy as np
 
-from pathlib import PosixPath
 from opencve.configuration import PROXY, EMBEDDINGS_FILE, RANK, config
 
 # OpenAI URL
@@ -44,11 +43,12 @@ def calc_distance(input):
 
     for item in format_dict.keys():
         # 距离度量方法
-    #     format_dict[item] = np.sqrt(np.sum(np.square(format_dict[item] - src_vector)))
+        # format_dict[item] = np.sqrt(np.sum(np.square(format_dict[item] - src_vector)))
 
-    # return sorted(format_dict.items(), key=lambda k: float(k[1]), reverse=False)[:RANK]
+        # return sorted(format_dict.items(), key=lambda k: float(k[1]), reverse=False)[:RANK]
         
         # 相似度度量方法
-        format_dict[item] = np.dot(format_dict[item], src_vector) / ((np.linalg.norm(format_dict[item]) * np.linalg.norm(src_vector)))
+        format_dict[item] = np.dot(format_dict[item], src_vector) / (
+                    np.linalg.norm(format_dict[item]) * np.linalg.norm(src_vector))
 
     return sorted(format_dict.items(), key=lambda k: float(k[1]), reverse=True)[:RANK]  

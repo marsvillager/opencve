@@ -7,10 +7,12 @@ from opencve.attack import Logger, update
 from opencve.attack.process import format_data, load_checkpoint
 from opencve.attack.calculation import calc_distance
 from opencve.constants import RED, BLUE, RESET
-from opencve.configuration import MITRE_ATTACK_LOG_PATH,CHECKPOINT_FILE, EMBEDDINGS_FILE, BATCH
+from opencve.configuration import MITRE_ATTACK_LOG_PATH, CHECKPOINT_FILE, EMBEDDINGS_FILE, BATCH
 
 import click
 from flask.cli import with_appcontext
+
+
 @click.command()
 @with_appcontext
 def attack():
@@ -59,10 +61,10 @@ def attack():
             pickle.dump(format_dict, f)
 
     print(calc_distance("grav is a file-based Web platform. Prior to version 1.7.42, the denylist introduced "
-                  "in commit 9d6a2d to prevent dangerous functions from being executed via injection of malicious "
-                  "templates was insufficient and could be easily subverted in multiple ways -- "
-                  "(1) using unsafe functions that are not banned, (2) using capitalised callable names, and "
-                  "(3) using fully-qualified names for referencing callables. Consequently, a low privileged attacker "
-                  "with login access to Grav Admin panel and page creation/update permissions "
-                  "is able to inject malicious templates to obtain remote code execution. "
-                  "A patch in version 1.7.42 improves the denylist."))
+                        "in commit 9d6a2d to prevent dangerous functions from being executed via injection of malicious"
+                        "templates was insufficient and could be easily subverted in multiple ways -- "
+                        "(1) using unsafe functions that are not banned, (2) using capitalised callable names, and "
+                        "(3) using fully-qualified names for referencing callables. Consequently, a low privileged "
+                        "attacker with login access to Grav Admin panel and page creation/update permissions "
+                        "is able to inject malicious templates to obtain remote code execution. "
+                        "A patch in version 1.7.42 improves the denylist."))

@@ -1,15 +1,15 @@
 import os
 import configparser
-from pathlib import Path, PosixPath
+from pathlib import Path
 
 PROXY = {
         'http': 'http://127.0.0.1:7890',
         'https': 'http://127.0.0.1:7890'
 }
 
-WORK_DIRECTORY: PosixPath = Path(__file__).parent.resolve()
-DEFAULT_CONFIG: PosixPath = Path(__file__).parent.resolve() / "default.cfg"
-DEFAULT_WELCOME_FILES: PosixPath = Path(__file__).parent.resolve() / "templates/_welcome"
+WORK_DIRECTORY: Path = Path(__file__).parent.resolve()
+DEFAULT_CONFIG: Path = Path(__file__).parent.resolve() / "default.cfg"
+DEFAULT_WELCOME_FILES: Path = Path(__file__).parent.resolve() / "templates/_welcome"
 OPENCVE_HOME: str = os.environ.get("OPENCVE_HOME") or str(Path.home() / "opencve")
 OPENCVE_CONFIG: str = os.environ.get("OPENCVE_CONFIG") or str(
     Path(OPENCVE_HOME) / "opencve.cfg"
@@ -39,9 +39,9 @@ else:
 
 # configuration of attack
 MITRE_ATTACK_LOG_PATH: str = OPENCVE_HOME + "/log/"
-MITRE_ATTACK_DATA_PATH: PosixPath = WORK_DIRECTORY / "attack/data/"
-CHECKPOINT_FILE: PosixPath = WORK_DIRECTORY / 'attack/checkpoint.txt'
-EMBEDDINGS_FILE: PosixPath = WORK_DIRECTORY / 'attack/embeddings/'
+MITRE_ATTACK_DATA_PATH: Path = WORK_DIRECTORY / "attack/data/"
+CHECKPOINT_FILE: Path = WORK_DIRECTORY / 'attack/checkpoint.txt'
+EMBEDDINGS_FILE: Path = WORK_DIRECTORY / 'attack/embeddings/'
 
 # 分批处理
 BATCH: int = 20000

@@ -29,7 +29,7 @@ def update() -> None:
     """
     Download or update mitre attack source data.
     """
-    if os.path.exists(MITRE_ATTACK_DATA_PATH + "enterprise-attack"):
+    if os.path.exists(str(MITRE_ATTACK_DATA_PATH / "enterprise-attack")):
         subprocess.call(["git", "-C", MITRE_ATTACK_DATA_PATH, "pull"], shell=False)
     else:
         subprocess.call(["git", "clone", CTI_URL, MITRE_ATTACK_DATA_PATH], shell=False)
