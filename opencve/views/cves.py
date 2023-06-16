@@ -2,7 +2,6 @@ import itertools
 import json
 import operator
 import numpy as np
-from attack.calculation import calc_distance
 
 from flask import abort, flash, redirect, request, render_template, url_for
 from flask_user import current_user, login_required
@@ -16,6 +15,7 @@ from opencve.models.changes import Change
 from opencve.models.events import Event
 from opencve.models.tags import CveTag
 from opencve.utils import convert_cpes, get_cwes_details, CustomHtmlHTML
+from opencve.attack.calculation import calc_distance
 
 
 @main.route("/cve")

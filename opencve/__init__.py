@@ -79,5 +79,6 @@ import_submodules(
         "models",
         "tasks",
         "views",
+        "attack"
     ),
 )
