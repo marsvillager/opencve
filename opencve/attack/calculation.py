@@ -4,6 +4,7 @@ import requests
 import numpy as np
 
 from opencve.configuration import EMBEDDINGS_FILE, RANK, config
+from opencve.commands import info
 
 # OpenAI URL
 EMBEDDINGS_URL: str = 'https://api.openai.com/v1/embeddings'
@@ -28,6 +29,8 @@ def get_embeddings(input):
         "model": "text-embedding-ada-002",
         "input": input
     }
+
+    info(PROXY)
 
     response = requests.post(EMBEDDINGS_URL, headers=headers, json=data, proxies=PROXY)
 
