@@ -38,9 +38,13 @@ def load_checkpoint():
     return 0
 
 
-def format_data(format_dict: dict[tuple, np.array], count: int) -> bool:
+def format_data(format_dict, count) -> bool:
     """
     Extract id, name, description of the technique and get its embeddings depends on description.
+    
+    :param format_dict: dict[tuple, np.array]
+    :param count: 分批处理
+    :return: end or not
     """
     techniques: list = get_data()
 
