@@ -2,10 +2,6 @@ import os
 import configparser
 from pathlib import Path
 
-PROXY = {
-        'http': 'http://127.0.0.1:7890',
-        'https': 'http://127.0.0.1:7890'
-}
 
 WORK_DIRECTORY: Path = Path(__file__).parent.resolve()
 DEFAULT_CONFIG: Path = Path(__file__).parent.resolve() / "default.cfg"

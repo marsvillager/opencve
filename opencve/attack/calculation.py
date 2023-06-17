@@ -3,13 +3,19 @@ import pickle
 import requests
 import numpy as np
 
-from opencve.configuration import PROXY, EMBEDDINGS_FILE, RANK, config
+from opencve.configuration import EMBEDDINGS_FILE, RANK, config
 
 # OpenAI URL
 EMBEDDINGS_URL: str = 'https://api.openai.com/v1/embeddings'
 
-# openai api key
+# OpenAI API key
 OPENAI_API_KEY: str = config.get("core", "openai_api_key")
+
+# proxy
+PROXY: list = {
+    'http': config.get("core", "http_proxy"),
+    'https': config.get("core", "https_proxy"),
+}
 
 
 def get_embeddings(input):
