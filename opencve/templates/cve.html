@@ -185,6 +185,24 @@
                 </div>
                 {% endif %}
             </div>
+
+            <div class="box box-primary">
+                <div class="box-header">
+                    <div class="box-title">The top <b><em>{{ cve.num }}</em></b> most relevant to the techniques in <b><a
+                        href="http://attack.mitre.org/" target="_blank">Mitre ATT&CK Matrix</a></b></div>
+                </div>
+                <div class="box-body">
+                    <p><strong>️&#9888 Note: If the link returns a <em>404</em> error, it means that the techniques from the 
+                        Mitre ATT&CK Matrix have not been published on the website. Please refer to the 
+                        <a href="https://github.com/mitre/cti" target="_blank">data source</a>.</strong></p>
+                </div>
+                {% for cve in cve.techniques %}
+                    <div class="box-body">
+                        <p><strong><i class="fa fa-external-link"></i> {{ loop.index }}. Correlation Coefficient ({{ cve[1] }}) ------ {{ cve[0][1] }} :  </strong>
+                            <a href="http://attack.mitre.org/techniques/{{ cve[0][0] }}" target="_blank">{{ cve[0][0] }}</a></p>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
 
         <div class="col-md-3">
@@ -273,24 +291,6 @@
                     <p class="alert alert-info">No CWE.</p>
                     {% endif %}
                 </div>
-            </div>
-
-            <div class="box box-primary">
-                <div class="box-header">
-                    <div class="box-title">The top <b><em>{{ cve.num }}</em></b> most relevant to <b><a
-                        href="http://attack.mitre.org/" target="_blank">the techniques in Mitre ATT&CK Matrix</a></b></div>
-                </div>
-                <div class="box-body">
-                    <p><strong>️&#9888 Note: If the link returns a <em>404</em> error, it means that the techniques from the 
-                        Mitre ATT&CK Matrix have not been published on the website. Please refer to the 
-                        <a href="https://github.com/mitre/cti" target="_blank">data source</a>.</strong></p>
-                </div>
-                {% for cve in cve.techniques %}
-                    <div class="box-body">
-                        <p><strong><i class="fa fa-external-link"></i> {{ loop.index }}. Correlation Coefficient ({{ cve[1] }}) ------ {{ cve[0][1] }} :  </strong>
-                            <a href="http://attack.mitre.org/techniques/{{ cve[0][0] }}" target="_blank">{{ cve[0][0] }}</a></p>
-                    </div>
-                {% endfor %}
             </div>
         </div>
 
