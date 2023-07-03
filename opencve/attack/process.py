@@ -3,9 +3,8 @@ import numpy as np
 import stix2
 
 from stix2 import FileSystemSource, CompositeDataSource, Filter
-from opencve.attack.calculation import get_embeddings
-from opencve.constants import GREEN, RESET
-from opencve.configuration import MITRE_ATTACK_DATA_PATH, CHECKPOINT_FILE, BATCH
+from calculation import get_embeddings
+from config import GREEN, RESET, MITRE_ATTACK_DATA_PATH, CHECKPOINT_FILE, BATCH
 
 
 def get_data() -> list:
@@ -14,9 +13,9 @@ def get_data() -> list:
 
     :return: techniques of stix2
     """
-    enterprise_attack_src: stix2.FileSystemSource = FileSystemSource(str(MITRE_ATTACK_DATA_PATH / "enterprise-attack"))
-    mobile_attack_src: stix2.FileSystemSource = FileSystemSource(str(MITRE_ATTACK_DATA_PATH / "mobile-attack"))
-    ics_attack_src: stix2.FileSystemSource = FileSystemSource(str(MITRE_ATTACK_DATA_PATH / "ics-attack"))
+    enterprise_attack_src: stix2.FileSystemSource = FileSystemSource(MITRE_ATTACK_DATA_PATH + "/enterprise-attack")
+    mobile_attack_src: stix2.FileSystemSource = FileSystemSource(MITRE_ATTACK_DATA_PATH + "/mobile-attack")
+    ics_attack_src: stix2.FileSystemSource = FileSystemSource(MITRE_ATTACK_DATA_PATH + "/ics-attack")
 
     src = CompositeDataSource()
     src.add_data_sources([enterprise_attack_src, mobile_attack_src, ics_attack_src])
@@ -38,13 +37,9 @@ def load_checkpoint():
     return 0
 
 
-def format_data(format_dict, count) -> bool:
+def format_data(format_dict: dict[tuple, np.array], count: int) -> bool:
     """
     Extract id, name, description of the technique and get its embeddings depends on description.
-    
-    :param format_dict: dict[tuple, np.array]
-    :param count: 分批处理
-    :return: end or not
     """
     techniques: list = get_data()
 
