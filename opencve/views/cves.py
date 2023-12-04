@@ -1,6 +1,7 @@
 import itertools
 import json
 import operator
+import opencve.views.LLM
 
 from flask import abort, flash, redirect, request, render_template, url_for
 from flask_user import current_user, login_required
@@ -14,6 +15,16 @@ from opencve.models.changes import Change
 from opencve.models.events import Event
 from opencve.models.tags import CveTag
 from opencve.utils import convert_cpes, get_cwes_details, CustomHtmlHTML
+
+
+from opencve.configuration import (
+    DEFAULT_CONFIG,
+    DEFAULT_WELCOME_FILES,
+    OPENCVE_CONFIG,
+    OPENCVE_HOME,
+    OPENCVE_WELCOME_FILES,
+)
+from opencve.commands import ensure_config, error, info
 
 
 @main.route("/cve")
@@ -61,6 +72,24 @@ def cve(cve_id):
         for time, evs in (itertools.groupby(events, operator.attrgetter("created_at")))
     ]
 
+    # 漏洞发现 
+    records = []
+
+    with open(OPENCVE_HOME + '/records.jsonl', 'r') as f:
+        for line in f:
+            records.append(json.loads(line.strip()))
+    discoveries = []
+
+    for record in records:
+        # LLM
+        possibility=opencve.views.LLM.opencve_chat(json.dumps(cve.json["configurations"]),json.dumps(record))
+        info(possibility)
+        discovery = {
+            "record": json.dumps(record),
+            "possibility": possibility
+        }
+        discoveries.append(discovery)
+
     return render_template(
         "cve.html",
         cve=cve,
@@ -70,6 +99,7 @@ def cve(cve_id):
         user_tags=user_tags,
         cve_tags_encoded=cve_tags_encoded,
         events_by_time=events_by_time,
+        discovery=discoveries
     )
 
 

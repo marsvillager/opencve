@@ -185,6 +185,41 @@
                 </div>
                 {% endif %}
             </div>
+
+            <div class="box box-primary">
+                <div class="box-header">
+                    <div class="box-title">Discovery</div>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                class="fa fa-minus"></i></button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    {% if discovery %}
+                    <table class="table table-bordered">
+                        <thead>
+                            <th>Records</th>
+                            <th>Possibilities</th>
+                        </thead>
+                        <tbody>
+                        {% for item in discovery %}
+                        <tr>
+                            <td class="col-md-8 td-ellipsis">
+                                <div class="modal-body codejson">
+                                    {{ item.record }}
+                                </div>
+                            <td class="col-md-4" align="center">
+                                {{ item.possibility }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <p class="alert alert-info">No records.</p>
+                    {% endif %}
+                </div>
+            </div>
         </div>
 
         <div class="col-md-3">
