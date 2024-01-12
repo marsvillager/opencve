@@ -2,6 +2,8 @@ import itertools
 import json
 import operator
 import opencve.views.LLM
+import opencve.views.LLM_xy
+import re
 
 from flask import abort, flash, redirect, request, render_template, url_for
 from flask_user import current_user, login_required
@@ -82,12 +84,28 @@ def cve(cve_id):
 
     for record in records:
         # LLM
-        possibility=opencve.views.LLM.opencve_chat(json.dumps(cve.json["configurations"]),json.dumps(record))
-        info(possibility)
-        discovery = {
-            "record": json.dumps(record),
-            "possibility": possibility
-        }
+
+        answer=opencve.views.LLM.opencve_chat(json.dumps(cve.json["configurations"]),json.dumps(record))
+        
+        info(answer)
+        
+        pattern = r'(\d+(\.\d+)?)%'
+        match = re.search(pattern, answer)
+        
+        if match:
+            discovery = {
+                "record": json.dumps(record),
+                "possibility": match.group(1) + "%",
+                "reason": answer
+            }
+            
+        else:
+            discovery = {
+                "record": json.dumps(record),
+                "possibility": "无法确定",
+                "reason": answer
+            }
+
         discoveries.append(discovery)
 
     return render_template(
