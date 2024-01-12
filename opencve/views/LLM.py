@@ -1,16 +1,8 @@
-
-
-
-
 import openai
 
-# openai.api_key = "sk-ZDhO81XNnGIohah4WQaTP8fAs35hNCJQNP56eKNAKUUMRY6S"
-# openai.api_key = "sk-uaIMg4V485gtd8f4VAmv8hVOCw9eAF6gejKj0p7W8MQ2PkxJ"
 openai.api_key = "sk-0A10ygddkOtZoeMUiVBHaOozf1eW2yA5wu3llgyAkbGAesen"
 openai.api_base = "https://api.chatanywhere.tech/v1"
 
-# openai.api_key = "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"
-# openai.api_base = "https://api.openai.com/v1"
 
 def opencve_chat(opencve_info,machine_info):
     prompt=[
