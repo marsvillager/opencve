@@ -199,17 +199,24 @@
                     <table class="table table-bordered">
                         <thead>
                             <th>Records</th>
-                            <th>Possibilities</th>
+                            <th>Possibility</th>
+                            <th>Reasons</th>
                         </thead>
                         <tbody>
                         {% for item in discovery %}
                         <tr>
-                            <td class="col-md-8 td-ellipsis">
+                            <td class="col-md-4 td-ellipsis">
                                 <div class="modal-body codejson">
                                     {{ item.record }}
                                 </div>
+                            </td>
+                            <td class="col-md-4" align="center" style="font-size: 24px;">
+                                <br><br><br>
+                                <i><b>{{ item.possibility }}</b></i>
+                            </td>
                             <td class="col-md-4" align="center">
-                                {{ item.possibility }}
+                                <br><br><br>
+                                {{ item.reason }}
                             </td>
                         </tr>
                         {% endfor %}
