@@ -2,7 +2,6 @@ import itertools
 import json
 import operator
 import opencve.views.LLM
-import opencve.views.LLM_xy
 import re
 
 from flask import abort, flash, redirect, request, render_template, url_for
