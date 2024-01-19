@@ -39,7 +39,7 @@ def upgrade_endpoint():
 
     records = []
 
-    with open(OPENCVE_HOME + '/records.jsonl', 'r') as f:
+    with open('/app/records.jsonl', 'r') as f:
         for line in f:
             records.append(json.loads(line.strip()))
     
