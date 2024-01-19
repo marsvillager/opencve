@@ -3,6 +3,7 @@ import json
 import operator
 import opencve.views.LLM
 import re
+import psycopg2
 
 from flask import abort, flash, redirect, request, render_template, url_for
 from flask_user import current_user, login_required
@@ -26,6 +27,7 @@ from opencve.configuration import (
     OPENCVE_WELCOME_FILES,
 )
 from opencve.commands import ensure_config, error, info
+from opencve.configuration import config
 
 
 @main.route("/cve")
@@ -74,38 +76,65 @@ def cve(cve_id):
     ]
 
     # 漏洞发现 
-    records = []
-
-    with open(OPENCVE_HOME + '/records.jsonl', 'r') as f:
-        for line in f:
-            records.append(json.loads(line.strip()))
     discoveries = []
 
+    database_uri = config.get("core", "database_uri")
+    db_info = database_uri.split(":")
+    database = db_info[3].split("/")[1]
+    user = db_info[1].split("/")[2]
+    password = db_info[2].split("@")[0]
+    host = db_info[2].split("@")[1]
+    port = db_info[3].split("/")[0]
+
+    conn = psycopg2.connect(database=database, user=user, password=password, host=host, port=port)
+    cursor=conn.cursor()
+
+    sql="select * from endpoints"
+    cursor.execute(sql)
+    
+    records=cursor.fetchall()
     for record in records:
         # LLM
 
-        answer=opencve.views.LLM.opencve_chat(json.dumps(cve.json["configurations"]),json.dumps(record))
-        
-        info(answer)
-        
+        #查找结果
+        try:
+            sql="select id from cves where cve_id = '{0}' ".format(cve_id)
+            cursor.execute(sql)
+            
+            id=cursor.fetchall()[0][0]
+
+            sql="select reason from results where cve_id= '{0}' and endpoint_id='{1}' ".format(id,record[0])
+            cursor.execute(sql)
+            answer=cursor.fetchall()[0][0]
+
+
+            if not answer:
+                raise Exception("Query result is empty")
+                            
+        except Exception as e:
+            answer=" "
+
         pattern = r'(\d+(\.\d+)?)%'
         match = re.search(pattern, answer)
-        
+
         if match:
             discovery = {
-                "record": json.dumps(record),
+                "record": json.dumps(record[2]),
                 "possibility": match.group(1) + "%",
                 "reason": answer
             }
             
         else:
             discovery = {
-                "record": json.dumps(record),
+                "record": json.dumps(record[2]),
                 "possibility": "无法确定",
                 "reason": answer
             }
 
         discoveries.append(discovery)
+
+    cursor.close()
+    conn.close()
 
     return render_template(
         "cve.html",

@@ -10,6 +10,12 @@ from opencve.commands.upgrade_db import upgrade_db
 from opencve.commands.imports import import_data
 from opencve.commands.webserver import webserver
 
+#自定义
+from opencve.commands.upgrade_result import upgrade_result
+from opencve.commands.upgrade_endpoint import upgrade_endpoint
+from opencve.commands.export_victim import export_victim
+from opencve.commands.export_affected_cves import export_affected_cves
+
 
 @click.group()
 @click.version_option(version=__version__)
@@ -24,3 +30,9 @@ cli.add_command(import_data)
 cli.add_command(init)
 cli.add_command(upgrade_db)
 cli.add_command(webserver)
+
+#自定义
+cli.add_command(upgrade_result)
+cli.add_command(upgrade_endpoint)
+cli.add_command(export_victim)
+cli.add_command(export_affected_cves)

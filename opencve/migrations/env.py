@@ -19,10 +19,14 @@ logger = logging.getLogger("alembic.env")
 # target_metadata = mymodel.Base.metadata
 from flask import current_app
 
+
+from opencve.configuration import config as opencve_config
+database_uri = opencve_config.get("core", "database_uri")
+
 config.set_main_option(
-    "sqlalchemy.url", current_app.config.get("SQLALCHEMY_DATABASE_URI")
+    'sqlalchemy.url', database_uri
 )
-target_metadata = current_app.extensions["migrate"].db.metadata
+target_metadata = current_app.extensions['migrate'].db.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -59,13 +63,13 @@ def run_migrations_online():
 
     # this callback is used to prevent an auto-migration from being generated
     # when there are no changes to the schema
-    # reference: http://alembic.readthedocs.org/en/latest/cookbook.html
+    # reference: http://alembic.zzzcomputing.com/en/latest/cookbook.html
     def process_revision_directives(context, revision, directives):
-        if getattr(config.cmd_opts, "autogenerate", False):
+        if getattr(config.cmd_opts, 'autogenerate', False):
             script = directives[0]
             if script.upgrade_ops.is_empty():
                 directives[:] = []
-                logger.info("No changes in schema detected.")
+                logger.info('No changes in schema detected.')
 
     engine = engine_from_config(
         config.get_section(config.config_ini_section),
@@ -73,7 +77,9 @@ def run_migrations_online():
         poolclass=pool.NullPool,
     )
 
+
     connection = engine.connect()
+    
     context.configure(
         connection=connection,
         target_metadata=target_metadata,

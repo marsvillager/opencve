@@ -80,3 +80,35 @@ alerts_events = db.Table(
         "event_id", UUIDType(binary=False), db.ForeignKey("events.id"), primary_key=True
     ),
 )
+
+results = db.Table(
+    "results",
+    db.Column(
+        "cve_id", 
+        UUIDType(binary=False), 
+        db.ForeignKey("cves.id"),
+        unique=False,
+        primary_key=False,
+    ),
+    db.Column(
+        "endpoint_id",
+        UUIDType(binary=False), 
+        db.ForeignKey("endpoints.id"),
+        unique=False,  
+        primary_key=False,
+    ),
+    db.Column(
+        "reason",
+        db.String(),
+        unique=False,
+        nullable=True,
+        primary_key=False,
+    ),
+    db.Column(
+        "possibility",
+        db.Integer,
+        unique=False,
+        nullable=True,
+        primary_key=False,
+    ),
+)
