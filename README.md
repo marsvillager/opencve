@@ -76,12 +76,21 @@ The second method can be useful if you don't want to manage the dependencies (li
 Check these documentations for the details of each step (initial import, admin creation, etc).
 
 ## LLM
-- ```virtualenv venv```
-- 进入虚拟环境，```pip install -r requirements.txt```
-- ```export OPENCVE_HOME=./conf```
-- 进入根目录，```python setup.py install```
-- ```opencve init```
-- 修改 ```./conf/opencve.cfg```，注意提前设置好 postgresql
-- ```opencve upgrade-db```
-- ```opencve import-data```
-- ```opencve webserver -b [ip:port]```
+- `virtualenv venv`
+- 进入虚拟环境，`pip install -r requirements.txt`
+- `export OPENCVE_HOME=./conf`
+- 进入根目录，`python setup.py install`
+- `opencve init`
+- 修改 `./conf/opencve.cfg`，注意提前设置好 postgresql
+- *Initialize the database*
+  - `opencve upgrade-db`
+- *Import the data*
+  - `opencve import-data`
+  - `opencve upgrade-endpoint`
+  - `opencve upgrade-result`
+- *Export the data*
+  - `opencve export-affected-cves`
+    - endpoint mac address:
+    - the possibility threshold:
+  - opencve export-victim [POSSIBILITY]
+- `opencve webserver -b [ip:port]`
