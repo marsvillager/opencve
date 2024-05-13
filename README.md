@@ -66,31 +66,80 @@ During the import of initial data OpenCVE will download and parse huge files, li
 
 ## Installation
 
-We provide 2 methods to install OpenCVE :
+```cmd
+git clone https://github.com/marsvillager/opencve.git
+git checkout -b discover origin/cve_discover
 
-- [manual installation](https://docs.opencve.io/installation/manual/)
-- [docker installation](https://docs.opencve.io/installation/docker/)
+# 进入虚拟环境
+pip install -r requirements.txt
+python setup.py install
 
-The second method can be useful if you don't want to manage the dependencies (like PostgreSQL, Redis or Celery).
+# 注：MaskupSafe 和 Werkzeug 根据本地 python 版本可能存在版本不合适问题（官方 3.8.17），可以先安装最新版本的 MaskupSafe 和 Werkzeug，成功安装 opencve 之后再卸载之前版本并安装 MaskupSafe 和 Werkzeug
+pip install opencve
 
-Check these documentations for the details of each step (initial import, admin creation, etc).
+# Configuration file
+export OPENCVE_HOME=./conf
+opencve init
 
-## LLM
-- `virtualenv venv`
-- 进入虚拟环境，`pip install -r requirements.txt`
-- `export OPENCVE_HOME=./conf`
-- 进入根目录，`python setup.py install`
-- `opencve init`
-- 修改 `./conf/opencve.cfg`，注意提前设置好 postgresql
-- *Initialize the database*
-  - `opencve upgrade-db`
-- *Import the data*
-  - `opencve import-data`
-  - `opencve upgrade-endpoint`
-  - `opencve upgrade-result`
-- *Export the data*
-  - `opencve export-affected-cves`
-    - endpoint mac address:
-    - the possibility threshold:
-  - opencve export-victim [POSSIBILITY]
-- `opencve webserver -b [ip:port]`
+# Initialize the database
+vim ~/opencve/opencve.cfg
+...
+database_uri = postgresql://john:mysupersecret@servername:5432/opencve
+...
+export FLASK_APP=./opencve/app.py
+flask db upgrade
+
+# Import the data
+opencve import-data				#录入cve数据
+opencve upgrade-endpoint		#通过读/conf/records.jsonl录入主机信息
+opencve upgrade-result			#通过LLM进行匹配度分析
+
+# Export the data
+opencve export-affected-cves	#筛选单主机受cve影响列表（输出到/conf下，命名为'{mac}_affected_cves.json'）
+- endpoint mac address:			#mac地址
+- the possibility threshold:	#possibility阈值设定
+opencve export-victim [POSSIBILITY]		#筛选全局范围受cve影响列表（输出到/conf下，为victim.csv）
+
+# Start the workers
+vim ~/opencve/opencve.cfg
+...
+celery_broker_url = redis://127.0.0.1:6379/0
+celery_result_backend = redis://127.0.0.1:6379/1
+...
+opencve celery worker -l INFO
+opencve celery beat -l INFO
+
+# Create an admin
+opencve create-user john john.doe@example.com --admin
+
+# Start the webserver
+opencve webserver -b [ip:port]
+```
+
+## 配置文件路径问题
+
+`./opencve/commands/upgrade_endpoint.py` 中 `upgrade_endpoint()` 函数：
+
+- Manual 路径是 `OPENCVE_HOME + '/records.jsonl'`（`OPENCVE_HOME=./conf`）
+
+## 注意事项说明
+
+/opencve/views/LLM.py
+
+目前采用的是智谱在线的glm4模型，其中的key是短时有效的。后续需要更改为本地LLM与langchain框架接入需要更改相关代码，prompt已在此文件中给出。
+
+
+
+/opencve/commands/upgrade_result.py
+
+测试阶段未将所有的cve以及主机通过LLM进行分析
+
+```python
+cursor.execute("select id,json from cves where cve_id in ('CVE-2019-9510','CVE-2018-13807','CVE-2022-46141','CVE-2020-1560','CVE-2019-19300','CVE-2021-34527','CVE-2023-5178');")
+```
+
+源代码如上，从中可以看出我们只用了七个cve用作测试，后续大规模进行分析需要改动。如下
+
+```python
+cursor.execute("select id,json from cves;")
+```
