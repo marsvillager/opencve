@@ -115,12 +115,13 @@ def cve(cve_id):
             answer=" "
 
         pattern = r'(\d+(\.\d+)?)%'
-        match = re.search(pattern, answer)
 
-        if match:
+        matches = re.findall(pattern, answer.split("Possibility",1)[-1])
+
+        if matches:
             discovery = {
                 "record": json.dumps(record[2]),
-                "possibility": match.group(1) + "%",
+                "possibility": matches[0][0] + "%",
                 "reason": answer
             }
             

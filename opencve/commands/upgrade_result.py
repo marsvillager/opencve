@@ -29,7 +29,7 @@ def upgrade_result():
     conn = psycopg2.connect(database=database, user=user, password=password, host=host, port=port)
     cursor=conn.cursor()
 
-    cursor.execute("select id,json from cves where cve_id in ('CVE-2022-31766','CVE-2023-46590','CVE-2023-6112');")
+    cursor.execute("select id,json from cves where cve_id in ('CVE-2019-9510','CVE-2018-13807','CVE-2022-46141','CVE-2020-1560','CVE-2019-19300','CVE-2021-34527','CVE-2023-5178');")
     cve_list=cursor.fetchall()
     
     cursor.execute("select id,json from endpoints")
@@ -43,14 +43,13 @@ def upgrade_result():
             possibility=-1
             pattern = r'(\d+(\.\d+)?)%'
 
-            match = re.search(pattern, reason)
+            matches = re.findall(pattern, reason.split("Possibility",1)[-1])
+	
+            if matches:
+                possibility = int(float(matches[0][0]))
 
-            if match:
-                possibility=int(match.group(1))
-
-            replace_reason='''
-            INSERT INTO results (cve_id, endpoint_id, reason,possibility) VALUES ('{0}' ,'{1}' ,'{2}' ,{3} ) ON CONFLICT (cve_id, endpoint_id) DO UPDATE SET reason = EXCLUDED.reason , possibility= EXCLUDED.possibility
-            '''.format(cve_record[0],endpoint_record[0],reason,possibility)
+            replace_reason='''INSERT INTO results (cve_id, endpoint_id, reason,possibility) VALUES ('{0}' ,'{1}' ,'{2}' ,{3} ) ON CONFLICT (cve_id, endpoint_id) DO UPDATE SET reason = EXCLUDED.reason , possibility= EXCLUDED.possibility
+            '''.format(cve_record[0],endpoint_record[0],reason.replace("'"," "),possibility)
             
             cursor.execute(replace_reason)
         conn.commit()
